@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabibiChacha - Global Currency Converter</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-green: #10b981;
+            --accent-blue: #38bdf8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-primary); min-height: 100vh; padding: 2rem 1rem; }
+
+        header { text-align: center; margin-bottom: 2rem; }
+        .title {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        header p { color: var(--text-secondary); font-size: 1rem; }
+
+        .main-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+
+        .converter-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group { margin-bottom: 1.2rem; }
+        .input-group label { display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        
+        input[type="number"], select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: #1e293b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .dropdown-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dropdown-box { flex: 1; }
+
+        .swap-btn {
+            background: var(--accent-blue);
+            color: #0f172a;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1.5rem;
+            transition: transform 0.2s;
+        }
+        .swap-btn:hover { transform: rotate(180deg); }
+
+        .result-box {
+            text-align: center;
+            padding: 1.2rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent-green);
+            border-radius: 10px;
+        }
+
+        .result-amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-green);
+            margin-bottom: 0.3rem;
+        }
+
+        .rate-info { font-size: 0.85rem; color: var(--text-secondary); }
+
+        .quick-buttons { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+        .quick-btn {
+            background: #334155;
+            color: var(--text-primary);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .quick-btn:hover { background: var(--accent-blue); color: #0f172a; }
+
+        /* Quick Reference Table */
+        .table-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+        .table-card h3 { font-size: 1.1rem; color: var(--accent-blue); margin-bottom: 1rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 0.6rem; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        th { color: var(--text-secondary); }
+        td strong { color: var(--accent-green); }
+
+        footer { text-align: center; margin-top: 2rem; color: var(--text-secondary); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 class="title">HabibiChacha Currency Converter</h1>
+        <p>Live Money Exchange Calculator for All Global Currencies</p>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- Main Converter Tool -->
+        <div class="converter-card">
+            
+            <div class="input-group">
+                <label for="amount">Enter Amount:</label>
+                <input type="number" id="amount" value="" min="0" oninput="calculateExchange()">
+            </div>
+
+            <div class="dropdown-row">
+                <div class="dropdown-box">
+                    <label for="fromCurrency">From:</label>
+                    <select id="fromCurrency" onchange="calculateExchange()">
+                        <!-- Options populated via JavaScript -->
+                    </select>
+                </div>
+
+                <button class="swap-btn" onclick="swapCurrencies()" title="Swap Currencies">⇄</button>
+
+                <div class="dropdown-box">
+                    <label for="toCurrency">To:</label>
+                    <select id="toCurrency" onchange="calculateExchange()">
+                        <!-- Options populated via JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <div class="result-amount" id="resultText">Calculating...</div>
+                <div class="rate-info" id="rateInfoText">Fetching live exchange rate...</div>
+            </div>
+
+            <!-- Quick Amount Shortcuts -->
+            <div class="quick-buttons">
+                <button class="quick-btn" onclick="setQuickAmount(100)">100</button>
+                <button class="quick-btn" onclick="setQuickAmount(500)">500</button>
+                <button class="quick-btn" onclick="setQuickAmount(1000)">1,000</button>
+                <button class="quick-btn" onclick="setQuickAmount(5000)">5,000</button>
+            </div>
+        </div>
+
+     
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Created & Maintained by <strong>HabibiChacha</strong></p>
+    </footer>
+
+    <script>
+        const currencies = {
+            "NPR": "Nepali Rupee (NPR)",
+            "INR": "Indian Rupee (INR)",
+            "USD": "US Dollar (USD)",
+            "AED": "UAE Dirham (AED)",
+            "EUR": "Euro (EUR)",
+            "GBP": "British Pound (GBP)",
+            "AUD": "Australian Dollar (AUD)",
+            "CAD": "Canadian Dollar (CAD)",
+            "JPY": "Japanese Yen (JPY)",
+            "QAR": "Qatari Rial (QAR)",
+            "SAR": "Saudi Riyal (SAR)",
+            "MYR": "Malaysian Ringgit (MYR)",
+            "SGD": "Singapore Dollar (SGD)",
+            "THB": "Thai Baht (THB)",
+            "CNY": "Chinese Yuan (CNY)",
+            "KRW": "South Korean Won (KRW)",
+            "PKR": "Pakistani Rupee (PKR)",
+            "BDT": "Bangladeshi Taka (BDT)",
+            "LKR": "Sri Lankan Rupee (LKR)"
+        };
+
+        const fromSelect = document.getElementById("fromCurrency");
+        const toSelect = document.getElementById("toCurrency");
+
+        function populateDropdowns() {
+            for (let code in currencies) {
+                let opt1 = document.createElement("option");
+                opt1.value = code;
+                opt1.textContent = `${code} - ${currencies[code]}`;
+                fromSelect.appendChild(opt1);
+
+                let opt2 = document.createElement("option");
+                opt2.value = code;
+                opt2.textContent = `${code} - ${currencies[code]}`;
+                toSelect.appendChild(opt2);
+            }
+
+            fromSelect.value = "NPR";
+            toSelect.value = "INR";
+        }
+
+        async function calculateExchange() {
+            const amount = parseFloat(document.getElementById("amount").value);
+            const from = fromSelect.value;
+            const to = toSelect.value;
+            const resultText = document.getElementById("resultText");
+            const rateInfoText = document.getElementById("rateInfoText");
+
+            if (isNaN(amount) || amount <= 0) {
+                resultText.textContent = "0.00 " + to;
+                rateInfoText.textContent = "Please enter a valid amount.";
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://open.er-api.com/v6/latest/${from}`);
+                const data = await res.json();
+
+                if (data.result === "success") {
+                    const rate = data.rates[to];
+                    const convertedAmount = (amount * rate).toFixed(2);
+
+                    resultText.textContent = `${convertedAmount} ${to}`;
+                    rateInfoText.textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+                } else {
+                    resultText.textContent = "Error fetching rates";
+                }
+            } catch (err) {
+                if (from === "NPR" && to === "INR") {
+                    const inr = (amount / 1.6).toFixed(2);
+                    resultText.textContent = `${inr} INR`;
+                    rateInfoText.textContent = "1.6 NPR = 1 INR (Fixed Peg Rate)";
+                } else {
+                    resultText.textContent = "Network Error";
+                    rateInfoText.textContent = "Unable to fetch live rates.";
+                }
+            }
+        }
+
+        function swapCurrencies() {
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+            calculateExchange();
+        }
+
+        function setQuickAmount(val) {
+            document.getElementById("amount").value = val;
+            calculateExchange();
+        }
+
+        populateDropdowns();
+        calculateExchange();
+    </script>
+</body>
+</html>
