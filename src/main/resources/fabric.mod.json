@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "note_block_songs",
+  "version": "${version}",
+  "name": "Note Block Songs",
+  "description": "Play local MP3 files from Note Blocks with nearby-client synchronization.",
+  "authors": ["Kodari"],
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.kodari.notesongs.NoteBlockSongs"],
+    "client": ["com.kodari.notesongs.client.NoteBlockSongsClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
